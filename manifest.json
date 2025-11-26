@@ -1,0 +1,17 @@
+{
+  "name": "SkaiZarazCustom",
+  "namespace": "skaizarazcustom",
+  "description": "Component to track ad clicks and conversions to Skai platform",
+  "icon": "assets/icon.svg",
+  "permissions": {
+      "server_network_requests": { "required": true },
+      "client_network_requests": { "required": true },
+      "cookies": { "required": true },
+      "local_storage": { "required": true },
+      "session_storage": { "required": true },
+      "document": { "required": true },
+      "window": { "required": true },
+      "navigator": { "required": true },
+      "fetch": { "required": true }
+  }
+}
