@@ -1,5 +1,9 @@
 # SkaiZarazCustom Managed Component
 
+## 📦 About
+
+This Managed Component tracks user clicks and conversions for Skai. It sends event data to Skai’s tracking endpoint, enabling advanced analytics and conversion attribution.
+
 ## Documentation
 
 Managed Components docs are published at **https://managedcomponents.dev** .
@@ -10,27 +14,94 @@ Find out more about Managed Components [here](https://blog.cloudflare.com/zaraz-
 [![PRs welcome!](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./CONTRIBUTING.md)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
-## 🚀 Quickstart local dev environment
+## 🛠️ Building Locally
 
 1. Make sure you're running node version >=18.
-2. Install dependencies with `npm i`
-3. Run unit test watcher with `npm run test:dev`
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Build the component:
+   ```bash
+   npm run build
+   ```
+   The output will be in the `dist` folder.
 
-## ⚙️ Tool Settings
+## 🚀 Deploying to Cloudflare
 
-> Settings are used to configure the tool in a Component Manager config file
+Use the following command to deploy the built component as a Cloudflare Worker:
+```bash
+npx managed-component-to-cloudflare-worker ./dist/index.js skai-zaraz ./wrangler.toml
+```
+This will package and deploy your component using the configuration in `wrangler.toml`.
 
-### Example Setting `boolean`
+## 🏷️ Installing in Cloudflare Tag Setup
 
-`exampleSetting` can be the pixelID or any other essential/optional setting like the option to anonymize IPs, send ecommerce events etc.
+To use this as a custom Managed Component in Cloudflare Zaraz:
 
-## 🧱 Fields Description
+1. Go to Cloudflare Zaraz Tag setup.
+2. Add a new Custom Managed Component.
+3. Upload or reference your deployed Worker.
+4. Fill in the required fields before activation:
+   - `trackingUrl`: The Skai endpoint to send tracking data.
+   - `profileToken`: Your Skai profile token for authentication.
 
-> Fields are properties that can/must be sent with certain events
+These fields must be configured for the component to function correctly.
 
-### Human Readable Field Name `type` _required_
+## 📋 Required Fields
 
-`field_id` give it a short description and send to a more detailed reference [Find more about how to create your own Managed Component](https://managedcomponents.dev/).
+| Field         | Description                                 | Required |
+|---------------|---------------------------------------------|----------|
+| `trackingUrl` | Skai endpoint for event tracking            | Yes      |
+| `profileToken`| Token for authenticating with Skai services | Yes      |
+
+## 💻 Example: Triggering a Purchase Event in the Browser
+
+Below is an example of how to trigger an e-commerce conversion event using Zaraz from the browser:
+
+> **Note:** The conversion type is determined by the Zaraz e-commerce event name you use (for example, `Order Completed` in this example). You can override this by specifying a custom value in the `conversionType` field. For the full list of supported e-commerce event names, see the [Zaraz E-commerce API documentation](https://www.cloudflare.com/apps/zaraz/docs/ecommerce-api/):
+>
+> - `Order Completed`
+> - `Product Added`
+> - `Product Removed`
+> - `Checkout Started`
+> - `Payment Info Entered`
+> - `Shipping Info Entered`
+> - `Cart Viewed`
+> - `Product Viewed`
+> - `Product List Viewed`
+> - `Promotion Viewed`
+> - `Promotion Clicked`
+> - `Refund Issued`
+> - ...and more
+
+```javascript
+function triggerPurchase() {
+    const orderId = 'ORD-' + Math.floor(Math.random() * 10000);
+    // Use the Standard E-commerce API
+    if (window.zaraz) {
+        window.zaraz.ecommerce('Order Completed', {
+            checkout_id: orderId,
+            conversionType: "My custom Conversion",
+            total: 29.99,
+            currency: 'USD',
+            products: [
+                {
+                    product_id: '998877',
+                    sku: 'RED-TSHIRT-M',
+                    name: 'Red T-Shirt',
+                    price: 29.99,
+                    quantity: 1
+                }
+            ]
+        });
+        console.log('Client: Sent zaraz.ecommerce("Order Completed")');
+        alert('Order Completed event sent! Check Server Logs.');
+    } else {
+        alert('Zaraz not loaded');
+    }
+}
+```
 
 ## 📝 License
 
