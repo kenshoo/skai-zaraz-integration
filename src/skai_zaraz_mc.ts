@@ -32,7 +32,7 @@ export default async function (manager: Manager, settings: ComponentSettings) {
       const searchParams = url.searchParams
       const skaiUuid = getSkaiUuid(client)
 
-      // Log the Event Payload instead of URL params
+      // Log the Event Payload
       client.execute(
         `console.log('🔍 Skai MC Pageview Payload:', ${JSON.stringify(
           payload
@@ -91,78 +91,84 @@ export default async function (manager: Manager, settings: ComponentSettings) {
         )
 
         // Helper to extract data from either root or nested 'ecommerce' object
-        // Zaraz events often nest data inside an 'ecommerce' key
         const data = payload.ecommerce || payload
 
-        // Trigger only on specific purchase events
-        if (payload.name === 'Order Completed' || payload.name === 'Purchase') {
-          const params = new URLSearchParams()
+        // ------------------------------------------------------------
+        // LOGIC: Process EVERY event.
+        // Conversion Type Priority:
+        // 1. Explicit 'conversionType' in payload
+        // 2. Event Name (e.g. 'Order Completed', 'Add to Cart')
+        // 3. Fallback to 'conv'
+        // ------------------------------------------------------------
 
-          // Fixed Skai Params
-          params.append('track', '1')
-          params.append('token', (settings.defaultToken as string) || '')
-          params.append('k_user_id', skaiUuid)
+        const params = new URLSearchParams()
 
-          // Dynamic Params (Mapped from Event)
-          const convType =
-            payload.conversionType ||
-            payload.conversion_type ||
-            data.conversionType ||
-            'conv'
-          params.append('conversionType', convType)
+        // Fixed Skai Params
+        params.append('track', '1')
+        // Updated to use profileToken
+        params.append('token', (settings.profileToken as string) || '')
+        params.append('k_user_id', skaiUuid)
 
-          // Improved Revenue Fallback: Check 'total', then 'value', then 'revenue'
-          // Checks both the root payload and the nested data object
-          const revenue =
-            data.total ||
-            data.value ||
-            data.revenue ||
-            payload.total ||
-            payload.value ||
-            payload.revenue ||
-            0
-          params.append('revenue', String(revenue))
+        // Determine Conversion Type
+        const convType =
+          payload.conversionType ||
+          payload.conversion_type ||
+          data.conversionType ||
+          payload.name ||
+          'conv'
 
-          const currency = data.currency || payload.currency || 'USD'
-          params.append('currency', currency)
+        params.append('conversionType', convType)
 
-          // Order ID / Transaction ID
-          const orderId =
-            data.checkout_id ||
-            data.order_id ||
-            data.transaction_id ||
-            payload.checkout_id ||
-            payload.order_id ||
-            payload.transaction_id ||
-            ''
-          params.append('orderId', orderId)
+        // Revenue Fallback
+        const revenue =
+          data.total ||
+          data.value ||
+          data.revenue ||
+          payload.total ||
+          payload.value ||
+          payload.revenue ||
+          0
+        params.append('revenue', String(revenue))
 
-          // Optional Promo Code
-          const coupon = data.coupon || payload.coupon
-          if (coupon) {
-            params.append('promoCode', coupon)
-          }
+        const currency = data.currency || payload.currency || 'USD'
+        params.append('currency', currency)
 
-          // Send Request
-          const conversionEndpoint: string = `${baseUrl}/pixel/v1?${params.toString()}`
+        // Order ID / Transaction ID
+        const orderId =
+          data.checkout_id ||
+          data.order_id ||
+          data.transaction_id ||
+          payload.checkout_id ||
+          payload.order_id ||
+          payload.transaction_id ||
+          ''
+        params.append('orderId', orderId)
 
-          // Use manager.fetch for server-side requests
-          await manager.fetch(conversionEndpoint, {
-            method: 'GET',
-          })
-
-          client.execute(
-            `console.log('💰 Skai MC: Conversion sent! Full Request:', '${conversionEndpoint}')`
-          )
-
-          // SEPARATE SERVER LOGS
-          console.log(
-            `SERVER LOG: Skai Conversion Payload: ${JSON.stringify(payload)}`
-          )
-          console.log(
-            `SERVER LOG: Skai Conversion Reported URL: ${conversionEndpoint}`
-          )
+        // Optional Promo Code
+        const coupon = data.coupon || payload.coupon
+        if (coupon) {
+          params.append('promoCode', coupon)
         }
+
+        // Send Request
+        const conversionEndpoint: string = `${baseUrl}/pixel/v1?${params.toString()}`
+
+        // Use manager.fetch for server-side requests
+        await manager.fetch(conversionEndpoint, {
+          method: 'GET',
+        })
+
+        client.execute(
+          `console.log('💰 Skai MC: Event sent! Type: ${convType}, Rev: ${revenue}')`
+        )
+
+        // SEPARATE SERVER LOGS
+        console.log(
+          `SERVER LOG: Skai Conversion Payload: ${JSON.stringify(payload)}`
+        )
+        console.log(
+          `SERVER LOG: Skai Conversion Reported URL: ${conversionEndpoint}`
+        )
       } catch (err) {
         console.error(
           `SERVER ERROR (E-commerce): ${

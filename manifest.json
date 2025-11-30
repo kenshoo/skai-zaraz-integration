@@ -3,6 +3,9 @@
   "namespace": "skaizarazcustom",
   "description": "Component to track ad clicks and conversions to Skai platform",
   "icon": "assets/icon.svg",
+  "categories": [
+    "Advertising"
+  ],
   "permissions": {
       "server_network_requests": { "required": true },
       "client_network_requests": { "required": true },
@@ -13,5 +16,20 @@
       "window": { "required": true },
       "navigator": { "required": true },
       "fetch": { "required": true }
+  },
+  "fields": {
+    "trackerUrl": {
+      "label": "Skai Tracker URL",
+      "type": "string",
+      "description": "The base URL for the Skai tracker.",
+      "default": "https://1111.xg4ken.com/",
+      "required": true
+    },
+    "profileToken": {
+      "label": "Skai Profile Token",
+      "type": "string",
+      "description": "The profile token (UUID) provided by Skai for your account.",
+      "required": true
+    }
   }
 }
