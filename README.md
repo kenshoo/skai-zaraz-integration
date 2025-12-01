@@ -1,4 +1,6 @@
-# SkaiZarazCustom Managed Component
+# Skai Zaraz Custom Managed Component
+
+![Skai Logo](./assets/skai_logo.png)
 
 ## 📦 About
 
@@ -48,32 +50,17 @@ To use this as a custom Managed Component in Cloudflare Zaraz:
 
 These fields must be configured for the component to function correctly.
 
-## 📋 Required Fields
+### 🔧 Example Fields Configuration in Zaraz
 
-| Field         | Description                                 | Required |
-|---------------|---------------------------------------------|----------|
-| `trackingUrl` | Skai endpoint for event tracking            | Yes      |
-| `profileToken`| Token for authenticating with Skai services | Yes      |
+Below is an example of how the fields configuration looks inside the Zaraz UI when setting up this custom Managed Component:
+
+![Fields Configuration](./assets/fields_config.png)
 
 ## 💻 Example: Triggering a Purchase Event in the Browser
 
 Below is an example of how to trigger an e-commerce conversion event using Zaraz from the browser:
 
-> **Note:** The conversion type is determined by the Zaraz e-commerce event name you use (for example, `Order Completed` in this example). You can override this by specifying a custom value in the `conversionType` field. For the full list of supported e-commerce event names, see the [Zaraz E-commerce API documentation](https://www.cloudflare.com/apps/zaraz/docs/ecommerce-api/):
->
-> - `Order Completed`
-> - `Product Added`
-> - `Product Removed`
-> - `Checkout Started`
-> - `Payment Info Entered`
-> - `Shipping Info Entered`
-> - `Cart Viewed`
-> - `Product Viewed`
-> - `Product List Viewed`
-> - `Promotion Viewed`
-> - `Promotion Clicked`
-> - `Refund Issued`
-> - ...and more
+> **Note:** The conversion type Skai receives is determined by the Zaraz e-commerce event name you use (for example, `Order Completed` in this snippet). For the full list of supported e-commerce event names, refer to the official Zaraz E-commerce documentation. You can override the inferred conversion type by passing an explicit `conversionType` field, as shown below.
 
 ```javascript
 function triggerPurchase() {
@@ -82,7 +69,7 @@ function triggerPurchase() {
     if (window.zaraz) {
         window.zaraz.ecommerce('Order Completed', {
             checkout_id: orderId,
-            conversionType: "My custom Conversion",
+            convertionType:"Shlomic Conversion"
             total: 29.99,
             currency: 'USD',
             products: [
@@ -95,6 +82,7 @@ function triggerPurchase() {
                 }
             ]
         });
+
         console.log('Client: Sent zaraz.ecommerce("Order Completed")');
         alert('Order Completed event sent! Check Server Logs.');
     } else {
