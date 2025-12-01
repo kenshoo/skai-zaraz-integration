@@ -35,16 +35,27 @@ Use the following command to deploy the built component as a Cloudflare Worker:
 ```bash
 npx managed-component-to-cloudflare-worker ./dist/index.js skai-zaraz ./wrangler.toml
 ```
-This will package and deploy your component using the configuration in `wrangler.toml`.
+This will package and deploy your component using the configuration in `wrangler.toml`. In this example, `skai-zaraz` is the name of the Managed Component as it will appear in Zaraz.
 
 ## 🏷️ Installing in Cloudflare Tag Setup
 
 To use this as a custom Managed Component in Cloudflare Zaraz:
 
 1. Go to Cloudflare Zaraz Tag setup.
-2. Add a new Custom Managed Component.
-3. Upload or reference your deployed Worker.
-4. Fill in the required fields before activation:
+
+2. Click on the **Custom Managed Component** logo to add a new tool. This is the entry point for adding a custom component (click the icon marked in red):
+
+   ![New Custom Component](./assets/new_custom_component.png)
+
+3. Configure the fields for your new custom component. The fields configuration screen should look similar to this, where you'll define the required fields (`trackingUrl` and `profileToken`):
+
+   ![Fields Configuration](./assets/fields_config.png)
+
+4. After the component is created and deployed, go to the **Components** tab, open the component picker, and select your Skai component. The selection screen should look similar to this. The component name you see here (for example, `skai-zaraz`) is the same name you provided in the `npx managed-component-to-cloudflare-worker` command above:
+
+   ![Custom Component Selection](./assets/custom_component_selection.png)
+
+5. Upload or reference your deployed Worker (if not already associated) and ensure the required fields are filled in before activation:
    - `trackingUrl`: The Skai endpoint to send tracking data.
    - `profileToken`: Your Skai profile token for authentication.
 
