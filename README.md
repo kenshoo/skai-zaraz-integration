@@ -47,17 +47,17 @@ To use this as a custom Managed Component in Cloudflare Zaraz:
 
    ![New Custom Component](./assets/new_custom_component.png)
 
-3. Configure the fields for your new custom component. The fields configuration screen should look similar to this, where you'll define the required fields (`trackingUrl` and `profileToken`):
-
-   ![Fields Configuration](./assets/fields_config.png)
-
-4. After the component is created and deployed, go to the **Components** tab, open the component picker, and select your Skai component. The selection screen should look similar to this. The component name you see here (for example, `skai-zaraz`) is the same name you provided in the `npx managed-component-to-cloudflare-worker` command above:
+3. Open the component picker and select your Skai component. The component name you see here (for example, `skai-zaraz`) is the same name you provided in the `npx managed-component-to-cloudflare-worker` command above:
 
    ![Custom Component Selection](./assets/custom_component_selection.png)
 
-5. Upload or reference your deployed Worker (if not already associated) and ensure the required fields are filled in before activation:
+4. Configure the required fields for your component:
    - `trackingUrl`: The Skai endpoint to send tracking data.
    - `profileToken`: Your Skai profile token for authentication.
+
+   The fields configuration screen should look similar to this:
+
+   ![Fields Configuration](./assets/fields_config.png)
 
 These fields must be configured for the component to function correctly.
 
