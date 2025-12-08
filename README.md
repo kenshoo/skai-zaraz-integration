@@ -61,12 +61,6 @@ To use this as a custom Managed Component in Cloudflare Zaraz:
 
 These fields must be configured for the component to function correctly.
 
-### 🔧 Example Fields Configuration in Zaraz
-
-Below is an example of how the fields configuration looks inside the Zaraz UI when setting up this custom Managed Component:
-
-![Fields Configuration](./assets/fields_config.png)
-
 ## 💻 Example: Triggering a Purchase Event in the Browser
 
 Below is an example of how to trigger an e-commerce conversion event using Zaraz from the browser:
