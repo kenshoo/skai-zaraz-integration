@@ -1,12 +1,7 @@
 name = "skai-zaraz"
 compatibility_date = "2024-01-01"
 main = "src/index.ts"
-# This enables the storage features (client.get / client.set)
-# You MUST run: npx wrangler kv namespace create "MC_DATA"
-# and replace the ID below with the one it gives you.
-[[kv_namespaces]]
-binding = "MC_DATA"
-id = "1f329f2835904976b3f5d39b72128698"
+
 
 [observability]
 [observability.logs]

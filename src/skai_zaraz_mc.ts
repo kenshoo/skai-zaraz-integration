@@ -5,7 +5,7 @@ const SKAI_UUID_KEY = '_skai_uuid'
 export default async function (manager: Manager, settings: ComponentSettings) {
   // Helper to ensure the tracker URL doesn't end with a slash
   const getBaseUrl = () => {
-    const url = (settings.trackerUrl as string) || 'https://1111.xg4ken.com/'
+    const url = (settings.trackingUrl as string) || 'https://1111.xg4ken.com/'
     return url.endsWith('/') ? url.slice(0, -1) : url
   }
 
@@ -44,20 +44,18 @@ export default async function (manager: Manager, settings: ComponentSettings) {
         const reportingParams = new URLSearchParams(searchParams.toString())
         reportingParams.set('k_user_id', skaiUuid)
 
+        client.execute(
+          `console.log('✅ Skai MC: Click reported. UUID: ${skaiUuid}')`
+        )
+
         // Explicitly typed as string to satisfy compiler
         const clickEndpoint: string = `${baseUrl}/trk/v1?${reportingParams.toString()}`
 
         // Use manager.fetch for server-side requests
-        // @ts-expect-error workaround for linter issue
-        manager
-          .fetch(clickEndpoint, {
-            method: 'GET',
-          })
-          .catch(e => console.error('Skai Click fetch failed', e))
 
-        client.execute(
-          `console.log('✅ Skai MC: Click reported. UUID: ${skaiUuid}')`
-        )
+        await manager.fetch(clickEndpoint, {
+          method: 'GET',
+        })
 
         // SEPARATE SERVER LOGS
         console.log(
